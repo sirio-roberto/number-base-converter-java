@@ -45,7 +45,29 @@ public class Main {
         } else {
             decimalNumber = numberToConvert;
         }
-        return decimalNumber;
+        return convertFromDecimal(decimalNumber, targetBase);
+    }
+
+    private static String convertFromDecimal(String decimalNumber, String targetBase) {
+        StringBuilder result = new StringBuilder();
+        int baseNum = Integer.parseInt(targetBase);
+        BigInteger baseBig = BigInteger.valueOf(baseNum);
+        BigInteger decimalBig = new BigInteger(decimalNumber);
+
+        getRemainderRecursively(decimalBig, baseBig, result);
+        return result.reverse().toString();
+    }
+
+    private static void getRemainderRecursively(BigInteger decimalBig, BigInteger baseBig, StringBuilder result) {
+        int modResult = Integer.parseInt(String.valueOf(decimalBig.mod(baseBig)));
+        char indexChar = POSSIBLE_CHARS.charAt(modResult);
+        result.append(indexChar);
+
+        if (decimalBig.divide(baseBig).equals(BigInteger.ONE)) {
+            result.append(decimalBig.divide(baseBig));
+        } else if (!decimalBig.divide(baseBig).equals(BigInteger.ZERO)) {
+            getRemainderRecursively(decimalBig.divide(baseBig), baseBig, result);
+        }
     }
 
     private static String convertoToDecimal(String numberToConvert, String srcBase) {
@@ -57,36 +79,5 @@ public class Main {
             bigInteger = bigInteger.add(BigInteger.valueOf((long) decimal));
         }
         return bigInteger.toString();
-    }
-
-//    private static void showToDecimalMenu() {
-//        System.out.print("Enter source number: ");
-//        String sourceNumber = scanner.nextLine();
-//        System.out.print("Enter source base: ");
-//        int base = Integer.parseInt(scanner.nextLine());
-//
-//        System.out.println("Conversion to decimal result: " + convertToDecimal(sourceNumber, base));
-//    }
-//
-//    private static int convertToDecimal(String sourceNumber, int base) {
-//        return Integer.parseInt(sourceNumber, base);
-//    }
-
-    private static void showFromDecimalMenu() {
-        System.out.print("Enter number in decimal system: ");
-        int decimalNumber = Integer.parseInt(scanner.nextLine());
-        System.out.print("Enter target base: ");
-        int chosenBase = Integer.parseInt(scanner.nextLine());
-
-        System.out.println("Conversion result: " + convertFromDecimal(decimalNumber, chosenBase));
-    }
-
-    private static String convertFromDecimal(int decimalNumber, int chosenBase) {
-        return switch (chosenBase) {
-            case 2 -> Integer.toBinaryString(decimalNumber);
-            case 8 -> Integer.toOctalString(decimalNumber);
-            case 16 -> Integer.toHexString(decimalNumber);
-            default -> "Unknown base!";
-        };
     }
 }
