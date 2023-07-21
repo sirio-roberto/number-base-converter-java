@@ -1,6 +1,8 @@
 package converter;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.util.Scanner;
 
 public class Main {
@@ -72,12 +74,25 @@ public class Main {
 
     private static String convertoToDecimal(String numberToConvert, String srcBase) {
         int baseNum = Integer.parseInt(srcBase);
-        BigInteger bigInteger = BigInteger.ZERO;
-        for (int i = 0; i < numberToConvert.length(); i++) {
-            int currentReversedIndex = numberToConvert.length() - 1 - i;
-            double decimal = POSSIBLE_CHARS.indexOf(numberToConvert.charAt(currentReversedIndex)) * Math.pow(baseNum, i);
-            bigInteger = bigInteger.add(BigInteger.valueOf((long) decimal));
+        BigDecimal bigDecimal = BigDecimal.ZERO;
+        int power;
+        boolean removeFractionalPart = true;
+        if (numberToConvert.indexOf('.') > -1) {
+            power = -numberToConvert.substring(numberToConvert.indexOf('.')).length() + 1;
+            removeFractionalPart = false;
+        } else {
+            power = 0;
         }
-        return bigInteger.toString();
+        for (int i = numberToConvert.length() - 1; i >= 0; i--) {
+            if (numberToConvert.charAt(i) != '.') {
+                double decimal = POSSIBLE_CHARS.indexOf(numberToConvert.charAt(i)) * Math.pow(baseNum, power);
+                bigDecimal = bigDecimal.add(BigDecimal.valueOf(decimal));
+                power++;
+            }
+        }
+        if (removeFractionalPart) {
+            return bigDecimal.toString().substring(0, bigDecimal.toString().indexOf('.'));
+        }
+        return bigDecimal.setScale(5, RoundingMode.HALF_UP).toString();
     }
 }
