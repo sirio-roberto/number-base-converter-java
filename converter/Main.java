@@ -54,10 +54,34 @@ public class Main {
         StringBuilder result = new StringBuilder();
         int baseNum = Integer.parseInt(targetBase);
         BigInteger baseBig = BigInteger.valueOf(baseNum);
-        BigInteger decimalBig = new BigInteger(decimalNumber);
+        BigDecimal decimalBig = new BigDecimal(decimalNumber);
 
-        getRemainderRecursively(decimalBig, baseBig, result);
-        return result.reverse().toString();
+        String[] bigDecimalArray = decimalBig.toString().split("\\.");
+
+        BigInteger integerBig = new BigInteger(bigDecimalArray[0]);
+        getRemainderRecursively(integerBig, baseBig, result);
+
+        result.reverse();
+        if (bigDecimalArray.length > 1) {
+            result.append(".");
+            BigDecimal fractionalPart = new BigDecimal("0." + bigDecimalArray[1]);
+            BigDecimal baseDecimal = new BigDecimal(baseBig);
+            calculateFractionalRecursively(fractionalPart, baseDecimal, result, 4);
+        }
+        return result.toString();
+    }
+
+    private static void calculateFractionalRecursively(BigDecimal fractional, BigDecimal baseDec, StringBuilder result, int depth) {
+        fractional = fractional.multiply(baseDec);
+        BigInteger decimalPart = fractional.toBigInteger();
+        int charIndex = decimalPart.intValue();
+        result.append(POSSIBLE_CHARS.charAt(charIndex));
+
+        fractional = fractional.subtract(new BigDecimal(decimalPart));
+
+        if (depth > 0 && !fractional.equals(BigDecimal.ZERO)) {
+            calculateFractionalRecursively(fractional, baseDec, result, depth - 1);
+        }
     }
 
     private static void getRemainderRecursively(BigInteger decimalBig, BigInteger baseBig, StringBuilder result) {
@@ -90,6 +114,7 @@ public class Main {
                 power++;
             }
         }
+        // TODO: I may need to round it later, not now
         if (removeFractionalPart) {
             return bigDecimal.toString().substring(0, bigDecimal.toString().indexOf('.'));
         }
