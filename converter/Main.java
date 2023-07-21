@@ -6,18 +6,35 @@ public class Main {
     private static final Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
-        String userCommand;
+        String firstLevelCommand;
         do {
-            System.out.print("Do you want to convert /from decimal or /to decimal? (To quit type /exit) ");
-            userCommand = scanner.nextLine();
+            System.out.print("Enter two numbers in format: {source base} {target base} (To quit type /exit) ");
+            firstLevelCommand = scanner.nextLine();
 
-            switch (userCommand) {
-                case "/from" -> showFromDecimalMenu();
-                case "/to" -> showToDecimalMenu();
+            if (!"/exit".equals(firstLevelCommand)) {
+                String[] bases = firstLevelCommand.split(" ");
+                String srcBase = bases[0];
+                String targetBase = bases[1];
+
+                String secondLevelCommand;
+                do {
+                    System.out.printf("Enter number in base %s to convert to base %s (To go back type /back) ",
+                            srcBase, targetBase);
+                    secondLevelCommand = scanner.nextLine();
+
+                    if (!"/back".equals(secondLevelCommand)) {
+                        System.out.println("Conversion result: " + getConversionResult(srcBase, targetBase));
+                    }
+
+                    System.out.println();
+                } while (!"/back".equals(secondLevelCommand));
             }
 
-            System.out.println();
-        } while (!"/exit".equals(userCommand));
+        } while (!"/exit".equals(firstLevelCommand));
+    }
+
+    private static String getConversionResult(String srcBase, String targetBase) {
+        return null;
     }
 
     private static void showToDecimalMenu() {
