@@ -3,6 +3,7 @@ package converter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class Main {
@@ -14,6 +15,10 @@ public class Main {
         do {
             System.out.print("Enter two numbers in format: {source base} {target base} (To quit type /exit) ");
             firstLevelCommand = scanner.nextLine();
+
+            while (isInvalidCommand(firstLevelCommand)) {
+                firstLevelCommand = scanner.nextLine();
+            }
 
             if (!"/exit".equals(firstLevelCommand)) {
                 String[] bases = firstLevelCommand.split(" ");
@@ -114,10 +119,35 @@ public class Main {
                 power++;
             }
         }
-        // TODO: I may need to round it later, not now
         if (removeFractionalPart) {
             return bigDecimal.toString().substring(0, bigDecimal.toString().indexOf('.'));
         }
         return bigDecimal.setScale(5, RoundingMode.HALF_UP).toString();
     }
+
+    private static boolean isInvalidCommand(String command) {
+        if (command == null || command.isBlank()) {
+            System.out.print("Please type two numbers from 2 to 36 or /exit: ");
+            return true;
+        }
+        if ("/exit".equals(command)) {
+            return false;
+        }
+        String[] commandArray = command.split(" ");
+        if (commandArray.length != 2) {
+            System.out.print("Please type two numbers from 2 to 36: ");
+            return true;
+        }
+        if (!Arrays.stream(commandArray).allMatch(s -> s.matches("\\d+"))) {
+            System.out.print("Please type two numbers from 2 to 36: ");
+            return true;
+        }
+        int base = Integer.parseInt(commandArray[0]);
+        int target = Integer.parseInt(commandArray[1]);
+        if (base < 2 || base > 36 || target < 2 || target > 36) {
+            System.out.print("Please type two numbers from 2 to 36: ");
+            return true;
+        }
+        return false;
+     }
 }
