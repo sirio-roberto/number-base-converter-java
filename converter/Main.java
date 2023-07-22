@@ -32,7 +32,7 @@ public class Main {
                     secondLevelCommand = scanner.nextLine();
 
                     if (!"/back".equals(secondLevelCommand)) {
-                        System.out.println("Conversion result: " + getConversionResult(secondLevelCommand, srcBase, targetBase));
+                        System.out.println("Conversion result: " + getConversionResult(secondLevelCommand.toLowerCase(), srcBase, targetBase));
                     }
 
                     System.out.println();
